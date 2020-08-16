@@ -6,15 +6,28 @@ import {
   TheHeader
 } from './index'
 import { AuthContext } from '../context/AuthContext'
-import { Redirect } from 'react-router-dom';
+import { CAlert } from '@coreui/react';
+
 
 const TheLayout = () => {
 
   const [auth, setAuth] = useContext(AuthContext);
+  const checkAuth = () => {
+    if (localStorage.getItem('loginStatus') === 'true') {
+      setAuth({
+        ...auth, status: true, currentUser: {
+          id: localStorage.getItem('id'),
+          username: localStorage.getItem('username'),
+          passowrd: localStorage.getItem('passowrd'),
+        }
+      });
+      return true;
+    }
+  }
 
   return (
     <div className="c-app c-default-layout">
-      {auth.status === true ?
+      {checkAuth && auth.status === true ?
         (
           <>
             <TheSidebar />
@@ -28,7 +41,16 @@ const TheLayout = () => {
           </>
         )
         :
-        <Redirect to="/login"/>
+        <>
+          <div className="c-wrapper">
+            <TheHeader />
+            <div className="c-body">
+              <CAlert color="danger" className="h5 text-center" closeButton>Anda harus login untuk menambah / edit data</CAlert>
+              <TheContent />
+            </div>
+            <TheFooter />
+          </div>
+        </>
       }
     </div>
   )

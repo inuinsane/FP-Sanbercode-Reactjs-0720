@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import {
   CHeader,
@@ -18,10 +18,8 @@ import routes from "../routes";
 
 import {
   TheHeaderDropdown,
-  TheHeaderDropdownMssg,
-  TheHeaderDropdownNotif,
-  TheHeaderDropdownTasks,
 } from "./index";
+import { AuthContext } from "../context/AuthContext";
 
 const TheHeader = () => {
   const dispatch = useDispatch();
@@ -41,36 +39,68 @@ const TheHeader = () => {
     dispatch({ type: "set", sidebarShow: val });
   };
 
+  const [auth] = useContext(AuthContext);
+
   return (
     <CHeader withSubheader>
-      <CToggler
-        inHeader
-        className="ml-md-3 d-lg-none"
-        onClick={toggleSidebarMobile}
-      />
-      <CToggler
-        inHeader
-        className="ml-3 d-md-down-none"
-        onClick={toggleSidebar}
-      />
+      {
+        auth.status === true ?
+          <>
+            <CToggler
+              inHeader
+              className="ml-md-3 d-lg-none"
+              onClick={toggleSidebarMobile}
+            />
+            <CToggler
+              inHeader
+              className="ml-3 d-md-down-none"
+              onClick={toggleSidebar}
+            />
+          </>
+          : ""
+      }
       <CHeaderBrand className="mx-auto d-lg-none" to="/">
         <CIcon name="logo" height="48" alt="Logo" />
       </CHeaderBrand>
 
       <CHeaderNav className="d-md-down-none mr-auto">
         <CHeaderNavItem className="px-3">
-          <CHeaderNavLink to="/dashboard">Dashboard</CHeaderNavLink>
+          <CHeaderNavLink to="/dashboard">
+            <CIcon name="cil-speedometer" />
+            Dashboard
+          </CHeaderNavLink>
         </CHeaderNavItem>
-        <CHeaderNavItem className="px-3">
-          <CHeaderNavLink to="/users">Movies</CHeaderNavLink>
-        </CHeaderNavItem>
-        <CHeaderNavItem className="px-3">
-          <CHeaderNavLink>Games</CHeaderNavLink>
-        </CHeaderNavItem>
+        {
+          auth.status ?
+            ""
+            :
+            <>
+              <CHeaderNav className="px-3">
+                <CHeaderNavLink to="/movie/list">
+                  <CIcon name="cil-movie" />
+                  {" "}Movie List
+                </CHeaderNavLink>
+              </CHeaderNav>
+              <CHeaderNav className="px-3">
+                <CHeaderNavLink to="/game/list">
+                <CIcon name="cil-gamepad" />
+                {" "}Game List
+                </CHeaderNavLink>
+              </CHeaderNav>
+            </>
+        }
       </CHeaderNav>
 
       <CHeaderNav className="px-3">
-        <TheHeaderDropdown />
+        {
+          auth.status ?
+            <TheHeaderDropdown />
+            :
+            <CHeaderNavLink to="/login">
+              <CIcon name="cil-user" />
+              {" "} Login
+            </CHeaderNavLink>
+        }
       </CHeaderNav>
 
       <CSubheader className="px-3 justify-content-between">
@@ -78,23 +108,16 @@ const TheHeader = () => {
           className="border-0 c-subheader-nav m-0 px-0 px-md-3"
           routes={routes}
         />
-        <div className="d-md-down-none mfe-2 c-subheader-nav">
-          <CLink className="c-subheader-nav-link" href="#">
-            <CIcon name="cil-speech" alt="Settings" />
-          </CLink>
-          <CLink
+        {/* <div className="d-md-down-none mfe-2 c-subheader-nav"> */}
+        {/* <CLink
             className="c-subheader-nav-link"
             aria-current="page"
             to="/dashboard"
           >
             <CIcon name="cil-graph" alt="Dashboard" />
             &nbsp;Dashboard
-          </CLink>
-          <CLink className="c-subheader-nav-link" href="#">
-            <CIcon name="cil-settings" alt="Settings" />
-            &nbsp;Settings
-          </CLink>
-        </div>
+          </CLink> */}
+        {/* </div> */}
       </CSubheader>
     </CHeader>
   );

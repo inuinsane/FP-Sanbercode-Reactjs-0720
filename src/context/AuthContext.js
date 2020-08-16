@@ -4,9 +4,15 @@ export const AuthContext = createContext();
 
 export const AuthProvider = (props) => {
     const [auth, setAuth] = useState({
-        currentUser: null,
-        users: null,
-        status: false
+        currentUser: {
+            id: 0,
+            username: null,
+            password: null,
+        },
+        list: null,
+        status: false,
+        url: 'https://backendexample.sanbersy.com/api/users',
+        loginUrl: 'https://backendexample.sanbersy.com/api/login',
     });
 
     return (
